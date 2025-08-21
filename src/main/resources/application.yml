@@ -1,0 +1,120 @@
+server:
+  port: 8082
+  servlet:
+    context-path: /expertise-service
+  tomcat:
+    threads:
+      max: 8    
+      min-spare: 2
+
+spring:
+  application:
+    name: expertise-service
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/gitrdfdb}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+  task:
+    execution:
+      pool:
+        core-size: 6      
+        max-size: 8    
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: public
+
+# Expert ratings configuration
+expert:
+  ratings:
+    directory: "/expertise/imports"
+    save-to-file: true
+    save-to-database: true
+  embeddings:
+    directory: "/expertise/embeddings"
+    
+    # External embedding service configuration
+    service-url: ${EMBEDDINGS_URL:http://localhost:8200/v1/embeddings}
+    model-id: ${EMBEDDINGS_MODEL:qwen3-embedding-8b}
+    dimensions: ${EMBEDDINGS_DIMENSIONS:4096} 
+    batch-size: 64
+    max-retries: 3
+    timeout-seconds: 30  # Increased for external service
+      
+    # Processing settings aligned with Docker resources
+    input-type: ${EMBEDDINGS_INPUT_TYPE:passage}
+    max-parallel-batches: 6  
+    max-entities-per-order: 10000
+    max-parallel-threads: 6 
+    auto-reset-on-dimension-change: ${AUTO_RESET_EMBEDDINGS_ON_DIMENSION_CHANGE:false}
+
+  vector:
+    similarity-threshold: 0.0  
+    max-candidates: 1000         
+    batch-size: 1000            
+    enable-pgvector: true         
+    max-parallel-threads: 6     
+    filter-by-entity-type: true     
+  similarity:
+    # Metric-based similarity settings
+    candidate-pool-size: 1000      
+    best-examples: 5 
+    worst-examples: 5    
+    min-similarity-threshold: 0.3 
+  # Validation configuration
+  validation:
+    min-embedding-norm: 0.1     
+    max-embedding-norm: 2.0      
+    similarity-sanity-threshold: 0.95 
+    enable-quality-checks: true     
+  # Orchestrator configuration
+  orchestrator:
+    max-processing-time-minutes: 30 
+    enable-async-processing: true   
+    retry-attempts: 2        
+    enable-fallback: true
+      
+
+# External services configuration
+services:
+  listener:
+    url: ${LISTENER_SERVICE_URL:http://listener-service:8080}
+  query:
+    url: ${QUERY_SERVICE_URL:http://query-service:8080}
+
+# Logging configuration
+logging:
+  level:
+    de.leipzig.htwk.gitrdf.expertise: INFO
+    de.leipzig.htwk.gitrdf.expertise.service.BatchEmbeddingService: WARN
+    de.leipzig.htwk.gitrdf.expertise.service.SemanticContextService: WARN
+    de.leipzig.htwk.gitrdf.expertise.controller: DEBUG  # Enable DEBUG for detailed entity processing logs
+    de.leipzig.htwk.gitrdf.expertise.service.VectorSimilarityService: DEBUG
+    de.leipzig.htwk.gitrdf.expertise.service: INFO
+    org.apache.poi: WARN
+    org.apache.jena: WARN
+    org.springframework.jdbc: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{HH:mm:ss} - %msg%n"
+
+# OpenAPI Documentation
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+---
+# Local development profile
+spring:
+  config:
+    activate:
+      on-profile: local
+
+# Redis configuration removed - no longer using cache

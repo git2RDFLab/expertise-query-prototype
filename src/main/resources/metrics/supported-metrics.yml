@@ -1,0 +1,102 @@
+# Centralized list of all supported expert metrics
+# Each metric corresponds to expert-rated quality dimensions from metrics.md
+
+supportedMetrics:
+  
+  # Git Commit Metrics
+  # Focus on commit message quality and change characteristics
+  commit:
+    - commitMessageClarityScore              # Clarity and informativeness of commit messages
+    - commitAtomicityScore                   # Single-purpose, focused commit evaluation  
+    - commitRationaleConstructivenessScore   # Reasoning quality and justification
+    - commitResolutionClarityScore           # Problem-solution clarity in message
+    - commitRiskAssessmentScore              # Change impact and risk evaluation
+    
+  # GitHub Issue Metrics  
+  # Focus on issue description quality and problem articulation
+  issue:
+    - issueTitleClarityScore                 # Issue title descriptiveness and clarity
+    - issueBodyClarityScore                  # Issue description quality and detail
+    - issueBodyConstructivenessScore         # Constructive problem description approach
+    - issueReproducibilityScore              # Steps to reproduce clarity and completeness
+    - issueImpactAssessmentScore             # Problem impact description and severity
+    
+  # GitHub Comment Metrics
+  # Focus on comment contribution quality and tone
+  comment:
+    - commentConstructivenessScore           # Constructive contribution to discussion
+    - commentToneAppropriatenessScore        # Professional and appropriate tone
+    
+  # Pull Request Metrics
+  # Focus on change description and review quality  
+  pull_request:
+    - pullRequestTitleClarityScore           # PR title descriptiveness
+    - pullRequestBodyClarityScore            # PR description quality
+    - pullRequestDescriptionQualityScore     # Overall description comprehensiveness
+
+# Metric Categories for Analysis
+metricCategories:
+  clarity:
+    - commitMessageClarityScore
+    - commitResolutionClarityScore  
+    - issueTitleClarityScore
+    - issueBodyClarityScore
+    - pullRequestTitleClarityScore
+    - pullRequestBodyClarityScore
+    
+  constructiveness:
+    - commitRationaleConstructivenessScore
+    - issueBodyConstructivenessScore
+    - commentConstructivenessScore
+    
+  technical_quality:
+    - commitAtomicityScore
+    - commitRiskAssessmentScore
+    - issueReproducibilityScore
+    - issueImpactAssessmentScore
+    - pullRequestDescriptionQualityScore
+    
+  communication:
+    - commentToneAppropriatenessScore
+
+# Entity Property Mappings
+# Defines which properties are available for each entity type
+entityProperties:
+  commit:
+    - message                    # Git commit message text
+    - authorName                 # Commit author name
+    - authorEmail                # Commit author email  
+    - authorDate                 # Commit authoring date
+    - committerName              # Commit committer name
+    - committerEmail             # Commit committer email
+    - commitDate                 # Commit date
+    - hash                       # Git commit hash
+    - filesModified              # Number of files changed
+    - commitLinesModified        # Total lines changed
+    
+  issue:
+    - title                      # Issue title text
+    - body                       # Issue description/body text
+    - submitter                  # Issue creator
+    - state                      # Issue state (open/closed)
+    - number                     # Issue number
+    - locked                     # Whether issue is locked
+    - issueTitleLength           # Character count of title
+    - issueBodyLength            # Character count of body
+    
+  comment:
+    - commentBody                # Comment text content (mapped to 'body' in queries)
+    - author                     # Comment author (mapped to 'author' in queries)
+    - createdAt                  # Comment creation timestamp
+    - commentId                  # Comment identifier
+    - commentLineLength          # Character count of comment
+    
+  pull_request:
+    - title                      # PR title text
+    - body                       # PR description/body text
+    - submitter                  # PR creator
+    - state                      # PR state (open/closed/merged)
+    - number                     # PR number
+    - locked                     # Whether PR is locked
+    - prTitleLength              # Character count of title
+    - prBodyLength               # Character count of body
